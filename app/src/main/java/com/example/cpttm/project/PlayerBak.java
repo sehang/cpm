@@ -1,5 +1,9 @@
 package com.example.cpttm.project;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -10,16 +14,19 @@ import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import java.sql.Blob;
+import java.util.ArrayList;
+
 /**
  * Allows playback of a single MP3 file via the UI. It contains a {@link MediaPlayerHolder}
  * which implements the {@link PlayerAdapter} interface that the activity uses to control
  * audio playback.
  */
 
-public class Player extends AppCompatActivity {
+public class PlayerBak extends AppCompatActivity {
 
     public static final String TAG = "Player";
-    public static final int MEDIA_RES_ID = R.raw.jazz_in_paris;
+    //public static final int MEDIA_RES_ID = R.raw.jazz_in_paris;
 
     private TextView mTextDebug;
     private SeekBar mSeekbarAudio;
@@ -27,10 +34,22 @@ public class Player extends AppCompatActivity {
     private PlayerAdapter mPlayerAdapter;
     private boolean mUserIsSeeking = false;
 
+    Integer Id;
+    String Title;
+    String Artist;
+    String Url;
+    ArrayList<Bitmap> ImgArray;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
+
+        //int listId = this.getIntent().getIntExtra("listId", 1);
+        int listId = 0;
+        initializeDataSource(listId);
+
         initializeUI();
         initializeSeekbar();
         initializePlaybackController();
@@ -40,7 +59,7 @@ public class Player extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mPlayerAdapter.loadMedia(MEDIA_RES_ID);
+        mPlayerAdapter.loadMedia(Url);
         Log.d(TAG, "onStart: create MediaPlayer");
     }
 
@@ -55,12 +74,36 @@ public class Player extends AppCompatActivity {
         }
     }
 
+    private void initializeDataSource(int listId) {
+        Url = "http://ioio-xr.16mb.com/song/1.mp3";
+
+//        AlbumSQLiteOpenHelper albumSQLiteOpenHelper = new AlbumSQLiteOpenHelper(this);
+//        SQLiteDatabase db = albumSQLiteOpenHelper.getReadableDatabase();
+//
+//        Cursor c = db.rawQuery("SELECT id, title, artist, url FROM list WHERE id = ? LIMIT 1", new String[]{String.valueOf(listId)});
+//        c.moveToPosition(0);
+//        Id = c.getInt(c.getColumnIndex("id"));
+//        Title = c.getString(c.getColumnIndex("title"));
+//        Artist = c.getString(c.getColumnIndex("artist"));
+//        Url = c.getString(c.getColumnIndex("url"));
+//
+//
+//        c = db.rawQuery("SELECT id, img FROM booklet WHERE id = ? LIMIT 1", new String[]{String.valueOf(listId)});
+//        ImgArray = new ArrayList<Bitmap>();
+//        while (c.moveToNext()) {
+//            byte[] byteArray = c.getBlob(c.getColumnIndex("img"));
+//            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+//            ImgArray.add(bitmap);
+//        }
+
+    }
+
     private void initializeUI() {
         mTextDebug = (TextView) findViewById(R.id.text_debug);
         Button mPlayButton = (Button) findViewById(R.id.button_play);
         Button mPauseButton = (Button) findViewById(R.id.button_pause);
         Button mResetButton = (Button) findViewById(R.id.button_reset);
-        mSeekbarAudio = (SeekBar) findViewById(R.id.seekbar_audio);
+        //mSeekbarAudio = (SeekBar) findViewById(R.id.seekbar_audio);
         mScrollContainer = (ScrollView) findViewById(R.id.scroll_container);
 
         mPauseButton.setOnClickListener(

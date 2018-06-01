@@ -20,7 +20,7 @@ public final class MediaPlayerHolder implements PlayerAdapter {
 
     private final Context mContext;
     private MediaPlayer mMediaPlayer;
-    private int mResourceId;
+    private String mResourceUrl;
     private PlaybackInfoListener mPlaybackInfoListener;
     private ScheduledExecutorService mExecutor;
     private Runnable mSeekbarPositionUpdateTask;
@@ -61,17 +61,17 @@ public final class MediaPlayerHolder implements PlayerAdapter {
 
     // Implements PlaybackControl.
     @Override
-    public void loadMedia(int resourceId) {
-        mResourceId = resourceId;
+    public void loadMedia(String resourceUrl) {
+        mResourceUrl = resourceUrl;
 
         initializeMediaPlayer();
 
         //AssetFileDescriptor assetFileDescriptor = mContext.getResources().openRawResourceFd(mResourceId);
-        String url = "http://www.gaana.mp3"; // your URL here;
+        //mResourceUrl = "https://github.com/sehang/cpm/blob/master/song/1.mp3?raw=true"; // your URL here;
 
         try {
             logToUI("load() {1. setDataSource}");
-            mMediaPlayer.setDataSource(url);
+            mMediaPlayer.setDataSource(mResourceUrl);
         } catch (Exception e) {
             logToUI(e.toString());
         }
@@ -108,8 +108,7 @@ public final class MediaPlayerHolder implements PlayerAdapter {
     @Override
     public void play() {
         if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
-            logToUI(String.format("playbackStart() %s",
-                    mContext.getResources().getResourceEntryName(mResourceId)));
+            logToUI(String.format("playbackStart() %s", mResourceUrl));
 
             mMediaPlayer.setOnPreparedListener(new OnPreparedListener() {
                 @Override
@@ -134,7 +133,7 @@ public final class MediaPlayerHolder implements PlayerAdapter {
         if (mMediaPlayer != null) {
             logToUI("playbackReset()");
             mMediaPlayer.reset();
-            loadMedia(mResourceId);
+            loadMedia(mResourceUrl);
             if (mPlaybackInfoListener != null) {
                 mPlaybackInfoListener.onStateChanged(PlaybackInfoListener.State.RESET);
             }

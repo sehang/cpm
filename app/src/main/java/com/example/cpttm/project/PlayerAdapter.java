@@ -6,7 +6,7 @@ package com.example.cpttm.project;
 
 public interface PlayerAdapter {
 
-    void loadMedia(int resourceId);
+    void loadMedia(String resourceUrl);
 
     void release();
 
