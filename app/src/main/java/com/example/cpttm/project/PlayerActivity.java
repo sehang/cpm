@@ -6,6 +6,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -39,6 +40,7 @@ public class PlayerActivity extends AppCompatActivity {
         //int listId = this.getIntent().getIntExtra("listId", 1);
         int listId = 0;
         initializeUrl(listId);
+        initialImageSlider();
         initializeUI();
 
         mediaPlayer = new MediaPlayer();
@@ -79,6 +81,12 @@ public class PlayerActivity extends AppCompatActivity {
 //            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
 //            ImgArray.add(bitmap);
 //        }
+    }
+
+    private void initialImageSlider() {
+        ViewPager mViewPager = (ViewPager) findViewById(R.id.viewPageAndroid);
+        AndroidImageAdapter adapterView = new AndroidImageAdapter(this);
+        mViewPager.setAdapter(adapterView);
     }
 
     private void initializeUI() {
