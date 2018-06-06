@@ -1,28 +1,31 @@
 package com.example.cpttm.project;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
+
 public class AndroidImageAdapter extends PagerAdapter {
     Context mContext;
 
-    AndroidImageAdapter(Context context) {
+    private ArrayList<Bitmap> sliderImagesBitmap;
+
+    AndroidImageAdapter(Context context, ArrayList<Bitmap> bitmapArray) {
         this.mContext = context;
+        sliderImagesBitmap = bitmapArray;
     }
 
     @Override
     public int getCount() {
-        return sliderImagesId.length;
+        Log.d("ImagesBitmapCount>>>", String.valueOf(sliderImagesBitmap.size()));
+        return sliderImagesBitmap.size();
     }
-
-    private int[] sliderImagesId = new int[]{
-            R.drawable.unnamed, R.drawable.wallpaper2, R.drawable.unnamed,
-            R.drawable.wallpaper2, R.drawable.unnamed, R.drawable.wallpaper2,
-    };
 
     @Override
     public boolean isViewFromObject(View v, Object obj) {
@@ -33,7 +36,8 @@ public class AndroidImageAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int i) {
         ImageView mImageView = new ImageView(mContext);
         mImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        mImageView.setImageResource(sliderImagesId[i]);
+        mImageView.setImageBitmap(sliderImagesBitmap.get(i));
+        //mImageView.setImageResource(sliderImagesId[i]);
         ((ViewPager) container).addView(mImageView, 0);
         return mImageView;
     }

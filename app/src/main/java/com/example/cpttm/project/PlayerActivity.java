@@ -1,16 +1,21 @@
 package com.example.cpttm.project;
 
 import android.app.ProgressDialog;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -34,6 +39,9 @@ public class PlayerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         Log.d("PlayerActivity", "PlayerActivity > onCreate");
 
@@ -61,35 +69,39 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     private void initializeUrl(int listId) {
-        Url = "http://ioio-xr.16mb.com/song/1.mp3";
+        AlbumSQLiteOpenHelper albumSQLiteOpenHelper = new AlbumSQLiteOpenHelper(this);
+        SQLiteDatabase db = albumSQLiteOpenHelper.getReadableDatabase();
 
-//        AlbumSQLiteOpenHelper albumSQLiteOpenHelper = new AlbumSQLiteOpenHelper(this);
-//        SQLiteDatabase db = albumSQLiteOpenHelper.getReadableDatabase();
-//
-//        Cursor c = db.rawQuery("SELECT id, title, artist, url FROM list WHERE id = ? LIMIT 1", new String[]{String.valueOf(listId)});
-//        c.moveToPosition(0);
-//        Id = c.getInt(c.getColumnIndex("id"));
-//        Title = c.getString(c.getColumnIndex("title"));
-//        Artist = c.getString(c.getColumnIndex("artist"));
-//        Url = c.getString(c.getColumnIndex("url"));
-//
-//
-//        c = db.rawQuery("SELECT id, img FROM booklet WHERE id = ? LIMIT 1", new String[]{String.valueOf(listId)});
-//        ImgArray = new ArrayList<Bitmap>();
-//        while (c.moveToNext()) {
-//            byte[] byteArray = c.getBlob(c.getColumnIndex("img"));
-//            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-//            ImgArray.add(bitmap);
-//        }
+        Cursor c = db.rawQuery("SELECT id, title, artist, url FROM list WHERE id = ? LIMIT 1", new String[]{String.valueOf(listId)});
+        c.moveToPosition(0);
+        Id = c.getInt(c.getColumnIndex("id"));
+        Title = c.getString(c.getColumnIndex("title"));
+        Artist = c.getString(c.getColumnIndex("artist"));
+        Url = c.getString(c.getColumnIndex("url"));
+
+        c = db.rawQuery("SELECT id, img FROM booklet WHERE id = ?", new String[]{String.valueOf(listId)});
+        ImgArray = new ArrayList<Bitmap>();
+        while (c.moveToNext()) {
+            byte[] byteArray = c.getBlob(c.getColumnIndex("img"));
+            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            ImgArray.add(bitmap);
+        }
+
+        Log.d("PlayerActivity>initializeUrl-> ImgArray Count", String.valueOf(ImgArray.size()));
     }
 
     private void initialImageSlider() {
         ViewPager mViewPager = (ViewPager) findViewById(R.id.viewPageAndroid);
-        AndroidImageAdapter adapterView = new AndroidImageAdapter(this);
+        AndroidImageAdapter adapterView = new AndroidImageAdapter(this, ImgArray);
         mViewPager.setAdapter(adapterView);
     }
 
     private void initializeUI() {
+        TextView textViewTitle = findViewById(R.id.textViewTitle);
+        TextView textViewDescription = findViewById(R.id.textViewDescription);
+        textViewTitle.setText(Title);
+        textViewDescription.setText(Artist);
+
         mPlayButton = (Button) findViewById(R.id.button_play);
         mPauseButton = (Button) findViewById(R.id.button_pause);
         mResetButton = (Button) findViewById(R.id.button_reset);
