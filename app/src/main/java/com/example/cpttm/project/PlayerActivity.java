@@ -1,6 +1,10 @@
 package com.example.cpttm.project;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -10,6 +14,7 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -46,6 +51,8 @@ public class PlayerActivity extends AppCompatActivity {
         Log.d("PlayerActivity", "PlayerActivity > onCreate");
 
         int listId = this.getIntent().getIntExtra("listId", 1);
+        Log.d( "PlayerActivity", "listId: " + listId );
+
         initializeUrl(listId);
         initialImageSlider();
         initializeUI();
@@ -87,6 +94,23 @@ public class PlayerActivity extends AppCompatActivity {
         }
 
         Log.d("PlayerActivity>initializeUrl-> ImgArray Count", String.valueOf(ImgArray.size()));
+
+        sendNotifcation( Title );
+    }
+
+    private void sendNotifcation( String title ) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentTitle("Playing")
+                .setContentText( title );
+
+        Intent mainActivityIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                this, 0, mainActivityIntent, 0
+        );
+        builder.setContentIntent(pendingIntent);
+        NotificationManager noticationManager = (NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE);
+        noticationManager.notify(0 , builder.build());
     }
 
     private void initialImageSlider() {
