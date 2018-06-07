@@ -45,8 +45,7 @@ public class PlayerActivity extends AppCompatActivity {
 
         Log.d("PlayerActivity", "PlayerActivity > onCreate");
 
-        //int listId = this.getIntent().getIntExtra("listId", 1);
-        int listId = 0;
+        int listId = this.getIntent().getIntExtra("listId", 1);
         initializeUrl(listId);
         initialImageSlider();
         initializeUI();

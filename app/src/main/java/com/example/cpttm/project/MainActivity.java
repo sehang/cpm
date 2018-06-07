@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void call ( Long aLong ) {
                         MainActivity.this.finish();
-                        Intent intent = new Intent(MainActivity.this, AlbumList.class);
+                        Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
                     }
